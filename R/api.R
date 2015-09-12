@@ -1,40 +1,49 @@
-
-
-# Set API key for current session.
-set_apikey <- function(apikey) options(mmapikey=apikey)
+library(XML)
 
 # Search for artists in the database
 # artist_id, artist_mbid not working yet -- need to find example
 # Would like to add genre in -- hard to parse.
-get_artist <- function(artist,
-                       artist_id=NA,
-                       artist_mbid=NA
-                       ){
-  library(stringr)
-  library(XML)
+get_artist <- function(artist,type='data.frame',...){
 
-  call = paste("http://api.musixmatch.com/ws/1.1/artist.search?",
+  type <- check_type(type)
+
+  call <- paste("http://api.musixmatch.com/ws/1.1/artist.search?",
                "q_artist=",artist,
                "&apikey=",getOption('mmapikey'),
                "&format=xml", sep = "")
-
   xml <- xmlParse(call)
 
-  artist_ids <- xmlToDataFrame(nodes=getNodeSet(xml, "//artist/artist_id"),stringsAsFactors = FALSE)
-  artist_names <- xmlToDataFrame(nodes=getNodeSet(xml, "//artist/artist_name"),stringsAsFactors = FALSE)
-  artist_country <- xmlToDataFrame(nodes=getNodeSet(xml, "//artist/artist_country"),stringsAsFactors = FALSE)
+  # !!! Is it inefficient here to pass XML
+  # Better to pass http request?
+  # Should pass by reference?
+  # Maybe doesn't matter
 
-  return(data.frame(id = artist_ids$text,
-                    name = artist_names$text,
-                    country = artist_country$text,
+  if( type %in% df.options)
+    result <- get_artist_df(xml)
+  if ( type %in% list.options)
+    result <- get_artist_list(xml)
+  result
+}
+
+# Returns XML parsed into easy to use data.frame
+get_artist_df <- function(xml){
+
+  artist_ids <- xmlToDataFrame(nodes=getNodeSet(xml, "//artist/artist_id"),stringsAsFactors = FALSE)$text
+  artist_names <- xmlToDataFrame(nodes=getNodeSet(xml, "//artist/artist_name"),stringsAsFactors = FALSE)$text
+  artist_country <- xmlToDataFrame(nodes=getNodeSet(xml, "//artist/artist_country"),stringsAsFactors = FALSE)$text
+
+  return(data.frame(id = artist_ids,
+                    name = artist_names,
+                    country = artist_country,
                     stringsAsFactors = FALSE))
 }
 
+# This returns a list containing all of the XML fields
+get_full_list<- function(xml) return(xmlToList(xml))
+
 # Get album discography of an artist
-get_albums <- function(artist_id,
-                       page_size=100){
-  library(stringr)
-  library(XML)
+get_albums <- function(artist_id,page_size=100,type='data.frame',...){
+  type <- check_type(type)
 
   call = paste("http://api.musixmatch.com/ws/1.1/artist.albums.get?",
                "artist_id=", artist_id,
@@ -44,6 +53,14 @@ get_albums <- function(artist_id,
 
   xml <- xmlParse(call)
 
+  if( type %in% df.options)
+    result <- get_albums_df(xml)
+  if ( type %in% list.options)
+    result <- get_full_list(xml)
+  result
+}
+
+get_albums_df <- function(xml){
   album_id <- xmlToDataFrame(nodes=getNodeSet(xml, "//album/album_id"),stringsAsFactors = FALSE)$text
   album_mbid <- xmlToDataFrame(nodes=getNodeSet(xml, "//album/album_mbid"),stringsAsFactors = FALSE)$text
   album_name <- xmlToDataFrame(nodes=getNodeSet(xml, "//album/album_name"),stringsAsFactors = FALSE)$text
@@ -51,7 +68,6 @@ get_albums <- function(artist_id,
   album_release_date <- xmlToDataFrame(nodes=getNodeSet(xml, "//album/album_release_date"),stringsAsFactors = FALSE)$text
   album_release_type <- xmlToDataFrame(nodes=getNodeSet(xml, "//album/album_release_type"),stringsAsFactors = FALSE)$text
   album_rating <- xmlToDataFrame(nodes=getNodeSet(xml, "//album/album_rating"),stringsAsFactors = FALSE)$text
-
 
   return(data.frame(album_id,
                     album_mbid,
@@ -62,13 +78,13 @@ get_albums <- function(artist_id,
                     album_rating))
 }
 
-get_tracks <- function(album){
-  library(stringr)
-  library(XML)
-  options(stringsAsFactors = FALSE)
+# get a list of songs on the album
+get_tracks <- function(album_id,type='data.frame'){
+
+  type <- check_type(type)
 
   call = paste("http://api.musixmatch.com/ws/1.1/album.tracks.get?",
-               "album_id=", album,
+               "album_id=", album_id,
                "&apikey=", getOption('mmapikey'),
                "&page_size=100",
                "&f_has_lyrics=1",
@@ -76,22 +92,61 @@ get_tracks <- function(album){
 
   xml <- xmlParse(call)
 
-  tracks <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/track_id"),stringsAsFactors = FALSE)
+  if( type %in% df.options)
+    result <- get_tracks_df(xml)
+  if ( type %in% list.options)
+    result <- get_full_list(xml)
+  result
+}
+get_tracks_df <- function(xml){
 
-  return(tracks$text)
+  track_id <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/track_id"),stringsAsFactors = FALSE)$text
+  track_mbid <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/track_mbid"),stringsAsFactors = FALSE)$text
+  track_spotify_id <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/track_spotify_id"),stringsAsFactors = FALSE)$text
+  track_soundcloud_id <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/track_soundcloud_id"),stringsAsFactors = FALSE)$text
+  track_xboxmusic_id <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/track_xboxmusic_id"),stringsAsFactors = FALSE)$text
+  track_name <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/track_name"),stringsAsFactors = FALSE)$text
+  track_length <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/track_length"),stringsAsFactors = FALSE)$text
+  instrumental <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/instrumental"),stringsAsFactors = FALSE)$text
+  has_lyrics <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/has_lyrics"),stringsAsFactors = FALSE)$text
+  album_id <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/album_id"),stringsAsFactors = FALSE)$text
+  artist_id <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/artist_id"),stringsAsFactors = FALSE)$text
+  track_share_url <- xmlToDataFrame(nodes=getNodeSet(xml, "//track/track_share_url"),stringsAsFactors = FALSE)$text
+
+  return(data.frame(track_id,
+                    track_mbid,
+                    track_spotify_id,
+                    track_soundcloud_id,
+                    track_xboxmusic_id,
+                    track_name,
+                    track_length,
+                    instrumental,
+                    has_lyrics,
+                    album_id,
+                    artist_id,
+                    track_share_url))
 }
 
-get_lyrics <- function(track){
-  library(stringr)
-  library(XML)
-  options(stringsAsFactors = FALSE)
+# get lyrics from a song
+get_lyrics <- function(track_id,type='data.frame',...){
+
+  type <- check_type(type)
 
   call = paste("http://api.musixmatch.com/ws/1.1/track.lyrics.get?",
-               "track_id=", track,
+               "track_id=", track_id,
                "&apikey=", getOption('mmapikey'),
                "&format=xml", sep = "")
 
   xml <- xmlParse(call)
+
+  if( type %in% df.options)
+    result <- get_tracks_df(xml)
+  if ( type %in% list.options)
+    result <- get_full_list(xml)
+  result
+}
+
+get_lyrics_df <- function(xml){
 
   lyrics <- tryCatch(xmlToDataFrame(nodes=getNodeSet(xml, "//lyrics_body"),stringsAsFactors = FALSE),
                      error = function(e) print("NA"))
@@ -103,23 +158,3 @@ get_lyrics <- function(track){
 
   return(lyrics_clean)
 }
-
-get_corpus <- function(artist, apikey){
-
-  #get albums for particular artist
-  albums <- get_albums(artist, apikey)
-
-  #loop through albums
-  tracks <- lapply(albums, get_tracks, apikey) %>% unlist()
-
-  #loop through tracks
-  lyrics <- lapply(tracks, get_lyrics, apikey) %>% unlist()
-
-  obj <- list(lyrics = data.frame(lyrics),
-              n_albums = length(albums),
-              n_tracks = length(tracks))
-
-  return(obj)
-}
-
-# collection <- get_corpus(artist, apikey)
