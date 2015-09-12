@@ -26,14 +26,14 @@ get_artist(artist = 'slayer',type = 'list')
 
 ### Get album discography of artist (**artist.albums.get**)
 
-```
+```{r}
 # Return data.frame of most useful fields to identify albums of an artist
 get_albums(2683)
 ```
 
 ### Get all tracks from an album (**album.tracks.get**)
 
-```
+```{r}
 # Return data.frame of most useful fields related to tracks on an album
 get_tracks(10324491)
 ```
