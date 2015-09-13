@@ -31,7 +31,7 @@ get_albums(2683)
 get_tracks(10324491)
 ```
 
-### Get Lyrics from a song (****)
+### Get Lyrics from a song (**track.lyrics.get**)
 ```{r}
 # Returns lyrics of a song
 get_lyrics(13809615)
