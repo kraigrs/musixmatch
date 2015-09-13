@@ -1,22 +1,15 @@
 # musiXmatch API wrapper in R
 
-## Installation
-
-```
-devtools::install_github('kraigrs/musixmatch')
-devtools::install_github('rweyant/musixmatch')
-```
-
 ## Usage
 
-```
+```{r}
 library(musixmatch)
 set_apikey(YOUR_APIKEY)
 ```
 
 ### Get Artist IDs (**artist.search**)
 
-```
+```{r}
 # Return data.frame of most useful fields to identify artist
 get_artist('slayer')
 
@@ -37,3 +30,11 @@ get_albums(2683)
 # Return data.frame of most useful fields related to tracks on an album
 get_tracks(10324491)
 ```
+
+### Get Lyrics from a song (****)
+```{r}
+# Returns lyrics of a song
+get_lyrics(13809615)
+```
+
+

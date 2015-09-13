@@ -1,10 +1,21 @@
-library(XML)
+suppressPackageStartupMessages(library(XML))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(stringr))
 
-# Search for artists in the database
-# artist_id, artist_mbid not working yet -- need to find example
-# Would like to add genre in -- hard to parse.
+#' Search for artists in the database
+#'
+#' @param artist string of the artist to search for, e.g. "Slayer"
+#' @param type type of object to return.
+#' @param ... other API parameters, e.g. artist_id, artist_mbid.
+#' 'data,frane' returns a data.frame of common elements of interest.
+#' 'list' will return the full XML results as a list
+#' @return a data.frame or list containing the data from the API call
+#' @examples
+#' get_artist('slayer')
+#' get_artist('slayer',type='list')
 get_artist <- function(artist,type='data.frame',...){
-
+  # artist_id, artist_mbid not working yet -- need to find example\n
+  # Would like to add genre in -- hard to parse.\n
   type <- check_type(type)
 
   call <- paste("http://api.musixmatch.com/ws/1.1/artist.search?",
@@ -21,11 +32,15 @@ get_artist <- function(artist,type='data.frame',...){
   if( type %in% df.options)
     result <- get_artist_df(xml)
   if ( type %in% list.options)
-    result <- get_artist_list(xml)
+    result <- get_full_list(xml)
   result
 }
 
-# Returns XML parsed into easy to use data.frame
+
+#' Returns XML parsed into easy to use data.frame
+#'
+#' @param xml an XML document with nodes artist_id, artist_name and artist_country
+#'
 get_artist_df <- function(xml){
 
   artist_ids <- xmlToDataFrame(nodes=getNodeSet(xml, "//artist/artist_id"),stringsAsFactors = FALSE)$text
@@ -38,10 +53,18 @@ get_artist_df <- function(xml){
                     stringsAsFactors = FALSE))
 }
 
-# This returns a list containing all of the XML fields
+#' This returns a list containing all of the XML fields
+#'
+#' @param xml an XML document with nodes artist_id, artist_name and artist_country
+#' @return list of full XML document
 get_full_list<- function(xml) return(xmlToList(xml))
 
-# Get album discography of an artist
+#' Get album discography of an artist
+#'
+#' @param artist_id MusiXmatcht artist id
+#' @param number of pages in XML document
+#' @param return type
+#' @return a data.frame or list containing the data from the API call
 get_albums <- function(artist_id,page_size=100,type='data.frame',...){
   type <- check_type(type)
 
@@ -78,7 +101,10 @@ get_albums_df <- function(xml){
                     album_rating))
 }
 
-# get a list of songs on the album
+#' Get a list of songs on the album
+#'
+#' @param album_id ID of album on musiXmatch
+#' @return a data.frame or list containing the data from the API call
 get_tracks <- function(album_id,type='data.frame'){
 
   type <- check_type(type)
@@ -127,7 +153,10 @@ get_tracks_df <- function(xml){
                     track_share_url))
 }
 
-# get lyrics from a song
+#' get lyrics from a song
+#'
+#' @param track_id musiXmatch ID of song
+#' @return a data.frame or list containing the data from the API call
 get_lyrics <- function(track_id,type='data.frame',...){
 
   type <- check_type(type)
@@ -140,7 +169,7 @@ get_lyrics <- function(track_id,type='data.frame',...){
   xml <- xmlParse(call)
 
   if( type %in% df.options)
-    result <- get_tracks_df(xml)
+    result <- get_lyrics_df(xml)
   if ( type %in% list.options)
     result <- get_full_list(xml)
   result
@@ -154,7 +183,10 @@ get_lyrics_df <- function(xml){
   lyrics_clean <- lyrics %>%
     as.character() %>%
     gsub("This Lyrics is NOT for Commercial use","", .) %>%
-    gsub("\\n", " ", .)
+    gsub("\\n", " ", .) %>%
+    gsub(" ... ",' ',.) %>%
+    gsub("[*]",' ',.) %>%
+    stringr::str_trim
 
   return(lyrics_clean)
 }
