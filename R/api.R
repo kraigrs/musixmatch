@@ -110,9 +110,8 @@ get_artist <- function(artist_id,simplify=TRUE,...){
 
   check_status_code(status_code(request))
 
-  result <- content(request)
-#   if( simplify )  result <- simplify_get_artist(content(request))
-#   else result <- get_full_list(content(request))
+  if( simplify && FALSE )  result <- simplify_get_artist(content(request))
+  else result <- get_full_list(content(request))
 
   result
 }
@@ -130,9 +129,8 @@ get_artist_related <- function(artist_id,page=1,page_size=10,simplify=TRUE,...){
 
   check_status_code(status_code(request))
 
-  result <- content(request)
-  #   if( simplify )  result <- simplify_get_artist(content(request))
-  #   else result <- get_full_list(content(request))
+  if( simplify && FALSE)  result <- simplify_get_artist_related(content(request))
+  else result <- get_full_list(content(request))
 
   result
 }
@@ -146,9 +144,8 @@ get_album <- function(album_id,simplify=TRUE,...){
 
   check_status_code(status_code(request))
 
-  result <- content(request)
-  #   if( simplify )  result <- simplify_get_artist(content(request))
-  #   else result <- get_full_list(content(request))
+  if( simplify  && FALSE )  result <- simplify_get_album(content(request))
+  else result <- get_full_list(content(request))
 
   result
 }
@@ -167,9 +164,8 @@ search_track <- function(q,q_lyrics,page=1,page_size=100,f_has_lyrics=1,simplify
 
   check_status_code(status_code(request))
 
-  result <- content(request)
-  #   if( simplify )  result <- simplify_get_artist(content(request))
-  #   else result <- get_full_list(content(request))
+  if( simplify && FALSE )  result <- simplify_search_track(content(request))
+  else result <- get_full_list(content(request))
 
   result
 }
@@ -182,27 +178,174 @@ get_track <- function(track_id,simplify=TRUE,...){
 
   check_status_code(status_code(request))
 
-  result <- content(request)
-  #   if( simplify )  result <- simplify_get_artist(content(request))
-  #   else result <- get_full_list(content(request))
+  if( simplify && FALSE )  result <- simplify_get_track(content(request))
+  else result <- get_full_list(content(request))
 
   result
 }
 
+
+get_chart_artist <- function(country,page=1,page_size=100,simplify=TRUE,...){
+
+  body <- list(apikey=getOption('mmapikey'),country=country,page=page,page_size=page_size,format='xml')
+
+  request <- api_call('chart.artists.get',body)
+
+  check_status_code(status_code(request))
+
+  if( simplify && FALSE )  result <- simplify_get_chart_artist(content(request))
+  else result <- get_full_list(content(request))
+
+  result
+}
+
+get_chart_tracks <- function(country,page=1,page_size=100,f_has_lyrics=1,simplify=TRUE,...){
+
+  body <- list(apikey=getOption('mmapikey'),country=country,page=page,page_size=page_size,f_has_lyrics=f_has_lyrics,format='xml')
+
+  request <- api_call('chart.tracks.get',body)
+
+  check_status_code(status_code(request))
+
+  if( simplify && FALSE )  result <- simplify_get_chart_artist(content(request))
+  else result <- get_full_list(content(request))
+
+  result
+}
+
+get_track_subtitle <- function(track_id,subtitle_format='irc',simplify=TRUE,...){
+
+  body <- list(apikey=getOption('mmapikey'),track_id=track_id,subtitle_format=subtitle_format,format='xml')
+
+  request <- api_call('track.subtitle.get',body)
+
+  check_status_code(status_code(request))
+
+  if( simplify && FALSE )  result <- simplify_get_chart_artist(content(request))
+  else result <- get_full_list(content(request))
+
+  result
+}
+
+get_track_snippet <- function(track_id,simplify=TRUE,...){
+
+  body <- list(apikey=getOption('mmapikey'),track_id=track_id,format='xml')
+
+  request <- api_call('track.snippet.get',body)
+
+  check_status_code(status_code(request))
+
+  if( simplify && FALSE )  result <- simplify_get_chart_artist(content(request))
+  else result <- get_full_list(content(request))
+
+  result
+}
+
+post_track_lyrics <- function(track_id,lyrics_body,simplify=TRUE,...){
+
+  body <- list(apikey=getOption('mmapikey'),track_id=track_id,lyrics_body=lyrics_body,format='xml')
+
+  request <- api_call('track.lyrics.post',body)
+
+  check_status_code(status_code(request))
+
+  if( simplify && FALSE )  result <- simplify_get_chart_artist(content(request))
+  else result <- get_full_list(content(request))
+
+  result
+}
+
+post_track_lyrics_feedback <- function(track_id,lyrics_id,feedback,simplify=TRUE,...){
+
+  body <- list(apikey=getOption('mmapikey'),track_id=track_id,lyrics_id=lyrics_id,feedback,format='xml')
+
+  request <- api_call('track.lyrics.feedback.post',body)
+
+  check_status_code(status_code(request))
+
+  if( simplify && FALSE )  result <- simplify_get_chart_artist(content(request))
+  else result <- get_full_list(content(request))
+
+  result
+}
+
+get_matcher_lyrics <- function(q_track,q_artist,simplify=TRUE,...){
+
+  body <- list(apikey=getOption('mmapikey'),q_track=q_track,q_artist=q_artist,feedback,format='xml')
+
+  request <- api_call('matcher.lyrics.get',body)
+
+  check_status_code(status_code(request))
+
+  if( simplify && FALSE )  result <- simplify_get_chart_artist(content(request))
+  else result <- get_full_list(content(request))
+
+  result
+}
+
+get_matcher_track <- function(q_track,q_artist,q_album,simplify=TRUE,...){
+
+  body <- list(apikey=getOption('mmapikey'),q_track=q_track,q_artist=q_artist,q_album=q_album,feedback,format='xml')
+
+  request <- api_call('matcher.track.get',body)
+
+  check_status_code(status_code(request))
+
+  if( simplify && FALSE )  result <- simplify_get_chart_artist(content(request))
+  else result <- get_full_list(content(request))
+
+  result
+}
+
+get_matcher_subtitle <- function(q_track,q_artist,simplify=TRUE,...){
+
+  body <- list(apikey=getOption('mmapikey'),q_track=q_track,q_artist=q_artist,feedback,format='xml')
+
+  request <- api_call('matcher.subtitle.get',body)
+
+  check_status_code(status_code(request))
+
+  if( simplify && FALSE )  result <- simplify_get_chart_artist(content(request))
+  else result <- get_full_list(content(request))
+
+  result
+}
+
+
+get_tracking_url <- function(domain,simplify=TRUE,...){
+
+  body <- list(apikey=getOption('mmapikey'),domain=domain,feedback,format='xml')
+
+  request <- api_call('tracking.url.get',body)
+
+  check_status_code(status_code(request))
+
+  if( simplify && FALSE )  result <- simplify_get_chart_artist(content(request))
+  else result <- get_full_list(content(request))
+
+  result
+}
+
+get_catalogue_dump <- function(simplify=TRUE,...){
+
+  body <- list(apikey=getOption('mmapikey'),feedback,format='xml')
+
+  request <- api_call('catalogue.dump.get',body)
+
+  check_status_code(status_code(request))
+
+  if( simplify && FALSE )  result <- simplify_get_chart_artist(content(request))
+  else result <- get_full_list(content(request))
+
+  result
+}
+
+
 ## DEV
 # track.search
 # track.get
-
-## TEST
-# track.lyrics.get
-# artist.get
-# artist.search
-# artist.albums.get
-# artist.related.get
 # album.get
-# album.tracks.get
-
-## NEED
+# artist.related.get
 # chart.artists.get
 # chart.tracks.get
 # track.subtitle.get
@@ -214,5 +357,15 @@ get_track <- function(track_id,simplify=TRUE,...){
 # matcher.subtitle.get
 # tracking.url.get
 # catalogue.dump.get
+
+
+## TEST
+# track.lyrics.get
+# artist.get
+# artist.search
+# artist.albums.get
+# album.tracks.get
+
+## NEED
 
 
