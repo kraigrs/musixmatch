@@ -4,7 +4,7 @@
 \alias{get_albums}
 \title{Get album discography of an artist}
 \usage{
-get_albums(artist_id, page_size = 100, type = "data.frame", ...)
+get_albums(artist_id, page_size = 100, simplify = TRUE, ...)
 }
 \arguments{
 \item{artist_id}{MusiXmatcht artist id}

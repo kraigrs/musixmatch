@@ -4,7 +4,7 @@
 \alias{get_lyrics}
 \title{get lyrics from a song}
 \usage{
-get_lyrics(track_id, type = "data.frame", ...)
+get_lyrics(track_id, simplify = TRUE, ...)
 }
 \arguments{
 \item{track_id}{musiXmatch ID of song}
