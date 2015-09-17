@@ -4,7 +4,7 @@
 \alias{get_tracks}
 \title{Get a list of songs on the album}
 \usage{
-get_tracks(album_id, type = "data.frame")
+get_tracks(album_id, simplify = TRUE, ...)
 }
 \arguments{
 \item{album_id}{ID of album on musiXmatch}

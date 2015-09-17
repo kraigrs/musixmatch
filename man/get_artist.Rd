@@ -4,16 +4,16 @@
 \alias{get_artist}
 \title{Search for artists in the database}
 \usage{
-get_artist(artist, type = "data.frame", ...)
+get_artist(artist, simplify = TRUE, ...)
 }
 \arguments{
 \item{artist}{string of the artist to search for, e.g. "Slayer"}
 
-\item{type}{type of object to return.}
-
 \item{...}{other API parameters, e.g. artist_id, artist_mbid.
 'data,frane' returns a data.frame of common elements of interest.
 'list' will return the full XML results as a list}
+
+\item{type}{type of object to return.}
 }
 \value{
 a data.frame or list containing the data from the API call
