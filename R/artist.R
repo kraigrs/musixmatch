@@ -76,7 +76,7 @@ get_artist <- function(artist_id,simplify=TRUE,...){
 }
 
 
-get_artist_related <- function(artist_id,page=1,page_size=10,simplify=TRUE,...){
+get_artist_related <- function(artist_id,page_size=10,simplify=TRUE,...){
 
   body <- list(apikey=getOption('mmapikey'),
                artist_id=artist_id,
@@ -87,7 +87,7 @@ get_artist_related <- function(artist_id,page=1,page_size=10,simplify=TRUE,...){
   dots <- list(...)
   body <- append(body,dots[names(dots) %in% c('artist_mbid','page')])
 
-  request <- api_call('artist.related..get',body)
+  request <- api_call('artist.related.get',body)
 
   check_status_code(status_code(request))
 

@@ -27,17 +27,13 @@ get_track_lyrics <- function(track_id,simplify=TRUE,...){
 search_track <- function(page_size=100,simplify=TRUE,...){
 
   body <- list(apikey=getOption('mmapikey'),
-               q=q,
-               q_lyrics=q_lyrics,
-               page=page,
                page_size=page_size,
-               f_has_lyrics=f_has_lyrics,
                format='xml')
   # Load optional arguments from dots
   dots <- list(...)
   body <- append(body,dots[names(dots) %in% c('q_track','q_artist','q_lyrics',
                                               'page','f_has_lyrics','f_artist_id',
-                                              'f_msuci_genre_id','f_artist_mbid',
+                                              'f_music_genre_id','f_artist_mbid',
                                               'f_lyrics_language','s_track_rating',
                                               's_artist_rating','quorum_factor')])
 
